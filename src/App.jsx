@@ -102,6 +102,28 @@ const App = () => {
     }
   };
 
+  const likeBlog = async (blog) => {
+    try {
+      await blogService.addLike(blog);
+    } catch (exception) {
+      if (exception.response && exception.response.data) {
+        setNotification({
+          text: exception.response.data.error,
+          type: "error",
+        });
+      } else {
+        setNotification({
+          text: "Failed to like blog. Try again",
+          type: "error",
+        });
+      }
+
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+    }
+  };
+
   const loginForm = () => {
     return (
       <>
@@ -152,7 +174,7 @@ const App = () => {
         )}
 
         {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
+          <Blog addLike={likeBlog} key={blog.id} blog={blog} />
         ))}
       </div>
     </div>
