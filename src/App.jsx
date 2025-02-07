@@ -11,14 +11,17 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [updateTrigger, setUpdateTrigger] = useState(0);
 
   const [notification, setNotification] = useState(null);
 
   const blogFormRef = useRef(null);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs([...blogs].reverse()));
-  }, [blogs]);
+    blogService
+      .getAll()
+      .then((blogs) => setBlogs([...blogs].sort((a, b) => b.likes - a.likes)));
+  }, [updateTrigger]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
@@ -75,6 +78,8 @@ const App = () => {
     try {
       await blogService.createBlog(newBlogObj);
 
+      setUpdateTrigger((prev) => prev + 1);
+
       setNotification({
         text: "New blog added!",
         type: "success",
@@ -105,6 +110,7 @@ const App = () => {
   const likeBlog = async (blog) => {
     try {
       await blogService.addLike(blog);
+      setUpdateTrigger((prev) => prev + 1);
     } catch (exception) {
       if (exception.response && exception.response.data) {
         setNotification({
@@ -114,6 +120,34 @@ const App = () => {
       } else {
         setNotification({
           text: "Failed to like blog. Try again",
+          type: "error",
+        });
+      }
+
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+    }
+  };
+
+  const handleDeleteBlog = async (id) => {
+
+    if(!window.confirm(`Delete blog?`)) {
+      return
+    }
+
+    try {
+      await blogService.deleteBlog(id);
+      setUpdateTrigger((prev) => prev + 1);
+    } catch (exception) {
+      if (exception.response && exception.response.data) {
+        setNotification({
+          text: exception.response.data.error,
+          type: "error",
+        });
+      } else {
+        setNotification({
+          text: "Failed to delete blog. Try again",
           type: "error",
         });
       }
@@ -174,7 +208,13 @@ const App = () => {
         )}
 
         {blogs.map((blog) => (
-          <Blog addLike={likeBlog} key={blog.id} blog={blog} />
+          <Blog
+            addLike={likeBlog}
+            deleteBlog={handleDeleteBlog}
+            key={blog.id}
+            blog={blog}
+            user={user}
+          />
         ))}
       </div>
     </div>
