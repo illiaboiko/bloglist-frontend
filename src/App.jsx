@@ -1,162 +1,162 @@
-import { useState, useEffect, useRef } from "react";
-import Blog from "./components/Blog";
-import BlogForm from "./components/BlogForm";
-import Notification from "./components/Notification";
-import blogService from "./services/blogs";
-import loginService from "./services/login";
-import Toggable from "./components/Toggable";
+import { useState, useEffect, useRef } from 'react'
+import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
+import blogService from './services/blogs'
+import loginService from './services/login'
+import Toggable from './components/Toggable'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [user, setUser] = useState(null);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [updateTrigger, setUpdateTrigger] = useState(0);
+  const [blogs, setBlogs] = useState([])
+  const [user, setUser] = useState(null)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [updateTrigger, setUpdateTrigger] = useState(0)
 
-  const [notification, setNotification] = useState(null);
+  const [notification, setNotification] = useState(null)
 
-  const blogFormRef = useRef(null);
+  const blogFormRef = useRef(null)
 
   useEffect(() => {
     blogService
       .getAll()
-      .then((blogs) => setBlogs([...blogs].sort((a, b) => b.likes - a.likes)));
-  }, [updateTrigger]);
+      .then((blogs) => setBlogs([...blogs].sort((a, b) => b.likes - a.likes)))
+  }, [updateTrigger])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
     }
-  }, []);
+  }, [])
 
   const handleLogin = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
     try {
-      const user = await loginService.login({ username, password });
-      window.localStorage.setItem("loggedBlogAppUser", JSON.stringify(user));
-      blogService.setToken(user.token);
-      setUser(user);
-      setUsername("");
-      setPassword("");
+      const user = await loginService.login({ username, password })
+      window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
+      blogService.setToken(user.token)
+      setUser(user)
+      setUsername('')
+      setPassword('')
       setNotification({
-        text: "Login Successful!",
-        type: "success",
-      });
+        text: 'Login Successful!',
+        type: 'success',
+      })
 
       setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+        setNotification(null)
+      }, 5000)
     } catch (exception) {
       if (exception.response && exception.response.data) {
         setNotification({
           text: exception.response.data.error,
-          type: "error",
-        });
+          type: 'error',
+        })
       } else {
         setNotification({
-          text: "Login Failed. Please try again",
-          type: "error",
-        });
+          text: 'Login Failed. Please try again',
+          type: 'error',
+        })
       }
 
       setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+        setNotification(null)
+      }, 5000)
     }
-  };
+  }
 
   const handleLogout = () => {
-    window.localStorage.removeItem("loggedBlogAppUser");
-    setUser(null);
-  };
+    window.localStorage.removeItem('loggedBlogAppUser')
+    setUser(null)
+  }
 
   const handleCreateBlog = async (newBlogObj) => {
-    blogFormRef.current.toggleVisibility();
+    blogFormRef.current.toggleVisibility()
     try {
-      await blogService.createBlog(newBlogObj);
+      await blogService.createBlog(newBlogObj)
 
-      setUpdateTrigger((prev) => prev + 1);
+      setUpdateTrigger((prev) => prev + 1)
 
       setNotification({
-        text: "New blog added!",
-        type: "success",
-      });
+        text: 'New blog added!',
+        type: 'success',
+      })
 
       setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+        setNotification(null)
+      }, 5000)
     } catch (exception) {
       if (exception.response && exception.response.data) {
         setNotification({
           text: exception.response.data.error,
-          type: "error",
-        });
+          type: 'error',
+        })
       } else {
         setNotification({
-          text: "Failed to create blo. Try again",
-          type: "error",
-        });
+          text: 'Failed to create blo. Try again',
+          type: 'error',
+        })
       }
 
       setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+        setNotification(null)
+      }, 5000)
     }
-  };
+  }
 
   const likeBlog = async (blog) => {
     try {
-      await blogService.addLike(blog);
-      setUpdateTrigger((prev) => prev + 1);
+      await blogService.addLike(blog)
+      setUpdateTrigger((prev) => prev + 1)
     } catch (exception) {
       if (exception.response && exception.response.data) {
         setNotification({
           text: exception.response.data.error,
-          type: "error",
-        });
+          type: 'error',
+        })
       } else {
         setNotification({
-          text: "Failed to like blog. Try again",
-          type: "error",
-        });
+          text: 'Failed to like blog. Try again',
+          type: 'error',
+        })
       }
 
       setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+        setNotification(null)
+      }, 5000)
     }
-  };
+  }
 
   const handleDeleteBlog = async (id) => {
 
-    if(!window.confirm(`Delete blog?`)) {
+    if(!window.confirm('Delete blog?')) {
       return
     }
 
     try {
-      await blogService.deleteBlog(id);
-      setUpdateTrigger((prev) => prev + 1);
+      await blogService.deleteBlog(id)
+      setUpdateTrigger((prev) => prev + 1)
     } catch (exception) {
       if (exception.response && exception.response.data) {
         setNotification({
           text: exception.response.data.error,
-          type: "error",
-        });
+          type: 'error',
+        })
       } else {
         setNotification({
-          text: "Failed to delete blog. Try again",
-          type: "error",
-        });
+          text: 'Failed to delete blog. Try again',
+          type: 'error',
+        })
       }
 
       setTimeout(() => {
-        setNotification(null);
-      }, 5000);
+        setNotification(null)
+      }, 5000)
     }
-  };
+  }
 
   const loginForm = () => {
     return (
@@ -183,8 +183,8 @@ const App = () => {
         </form>
         <br />
       </>
-    );
-  };
+    )
+  }
 
   return (
     <div>
@@ -218,7 +218,7 @@ const App = () => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App

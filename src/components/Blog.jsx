@@ -1,19 +1,19 @@
-import { useState } from "react";
+import { useState } from 'react'
 
 const Blog = ({ blog, addLike, deleteBlog, user }) => {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false)
 
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: "solid",
+    border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
-  };
+  }
 
   const toggleView = () => {
-    setVisible(!visible);
-  };
+    setVisible(!visible)
+  }
 
   const additionalInfo = () => {
     return (
@@ -32,18 +32,18 @@ const Blog = ({ blog, addLike, deleteBlog, user }) => {
           ) : null}
         </div>
       </>
-    );
-  };
+    )
+  }
 
   return (
     <div style={blogStyle}>
       <div>
         {blog.title} by {blog.author}
-        <button onClick={toggleView}>{visible ? "hide" : "view"}</button>
+        <button onClick={toggleView}>{visible ? 'hide' : 'view'}</button>
         {visible && additionalInfo()}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Blog;
+export default Blog
