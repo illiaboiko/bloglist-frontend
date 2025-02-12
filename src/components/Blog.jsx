@@ -18,11 +18,11 @@ const Blog = ({ blog, addLike, deleteBlog, user }) => {
   const additionalInfo = () => {
     return (
       <>
-        <div>
+        <div className="additionalBlogInfo">
           <div>{blog.url}</div>
           <div>
             {blog.likes} likes
-            <button onClick={() => addLike(blog)}>like</button>
+            <button onClick={() => addLike(blog)} data-testid='like-btn'>like</button>
             <div>created by: {blog.user.username}</div>
           </div>
           {user.username === blog.user.username ? (
@@ -39,7 +39,7 @@ const Blog = ({ blog, addLike, deleteBlog, user }) => {
     <div style={blogStyle}>
       <div>
         {blog.title} by {blog.author}
-        <button onClick={toggleView}>{visible ? 'hide' : 'view'}</button>
+        <button onClick={toggleView} data-testid="toggle-btn" >{visible ? 'hide' : 'view'}</button>
         {visible && additionalInfo()}
       </div>
     </div>
