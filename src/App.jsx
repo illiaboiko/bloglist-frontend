@@ -179,7 +179,7 @@ const App = () => {
             onChange={({ target }) => setPassword(target.value)}
           />
           <br />
-          <button type="submit">log in</button>
+          <button id='log-in-button' type="submit">log in</button>
         </form>
         <br />
       </>
