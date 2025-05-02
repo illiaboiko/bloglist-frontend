@@ -216,6 +216,12 @@ const App = () => {
             user={user}
           />
         ))}
+
+        <div>
+          <br />
+          <footer>Illia Boiko. Exercise for course by fullstackopen.com</footer>
+        </div>
+
       </div>
     </div>
   )
