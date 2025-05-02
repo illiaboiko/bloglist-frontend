@@ -22,7 +22,7 @@ const Notification = ({ text, type }) => {
 
   return (
     <>
-      <div style={style}>
+      <div className="notification" style={style}>
         <p>{text}</p>
       </div>
     </>

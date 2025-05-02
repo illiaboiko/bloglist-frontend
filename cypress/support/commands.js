@@ -23,3 +23,17 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('login', ({ username, password }) => {
+  cy.request('POST', `${Cypress.env('BACKEND')}/login`, {
+    username,
+    password,
+  }).then(({ body }) => {
+    localStorage.setItem('loggedBlogAppUser', JSON.stringify(body))
+    cy.visit('')
+  })
+})
+
+Cypress.Commands.add('createBlog', ({ title, author, url}) => {
+  cy.request('POST', 'http:')
+})

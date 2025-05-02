@@ -1,13 +1,8 @@
 describe('Blog app', function () {
   beforeEach(function () {
-    cy.request('POST', 'http://localhost:3001/api/testing/reset')
-    const user = {
-      name: 'One Two Three',
-      username: '123',
-      password: '123',
-    }
-    cy.request('POST', 'http://localhost:3001/api/users', user)
-    cy.visit('http://localhost:5173')
+    cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
+    cy.request('POST', `${Cypress.env('BACKEND')}/users`, Cypress.env('user'))
+    cy.visit('')
   })
 
   it('Login form is shown by default', function () {
@@ -32,6 +27,25 @@ describe('Blog app', function () {
       cy.get('#log-in-button').click()
 
       cy.contains('user 123 logged in')
+    })
+  })
+
+  describe('When logged in', function () {
+    beforeEach(function () {
+      console.log(Cypress.env('user'))
+      cy.login(Cypress.env('user'))
+    })
+
+    it('a new blog can be added', function () {
+      cy.contains('New Blog').click()
+      cy.get('#title').type('testing new blog')
+      cy.get('#author').type('test author')
+      cy.get('#url').type('test url')
+
+      cy.get('#createBlog').click()
+
+      cy.get('.notification').should('contain', 'New blog added!')
+      cy.contains('testing new blog by test author')
     })
   })
 })
