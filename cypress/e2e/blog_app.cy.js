@@ -1,7 +1,12 @@
+import { func } from 'prop-types'
+
 describe('Blog app', function () {
   beforeEach(function () {
+    // clearing database
     cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
+    // adding user
     cy.request('POST', `${Cypress.env('BACKEND')}/users`, Cypress.env('user'))
+    // visit main page
     cy.visit('')
   })
 
@@ -46,6 +51,65 @@ describe('Blog app', function () {
 
       cy.get('.notification').should('contain', 'New blog added!')
       cy.contains('testing new blog by test author')
+    })
+
+    it('a blog can be liked', function () {
+      cy.contains('New Blog').click()
+      cy.get('#title').type('testing new blog')
+      cy.get('#author').type('test author')
+      cy.get('#url').type('test url')
+
+      cy.get('#createBlog').click()
+
+      cy.contains('view').click()
+      cy.contains('like').click()
+
+      cy.contains('1 likes')
+    })
+
+    it('a blog can be deleted by the user who created it', function () {
+      cy.contains('New Blog').click()
+      cy.get('#title').type('testing new blog')
+      cy.get('#author').type('test author')
+      cy.get('#url').type('test url')
+
+      cy.get('#createBlog').click()
+
+      cy.contains('view').click()
+      cy.contains('delete').click()
+
+      cy.get('html').should('not.contain', 'testing new blog')
+    })
+  })
+
+  describe('Testing different users', function () {
+    beforeEach('preparing users and posts', function () {
+      // creating another test user
+      const user = {
+        username: 'test_user2',
+        password: '1234',
+      }
+      cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
+
+      // logging in as first user and creating a blog
+      cy.login(Cypress.env('user'))
+      const blogObj = {
+        title: 'cypress blog',
+        author: '123',
+        url: 'some ulr',
+      }
+      cy.createBlog(blogObj)
+      // loggin out
+      cy.logout()
+
+      // logging in as second user
+      cy.login(user)
+
+    })
+
+    it('non-creator of the blog cannot see the delete button', function () {
+      cy.contains('view').click()
+      cy.get('html').should('not.contain', 'delete')
     })
   })
 })
