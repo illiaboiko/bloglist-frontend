@@ -1,4 +1,4 @@
-import { func } from 'prop-types'
+import { Children } from "react"
 
 describe('Blog app', function () {
   beforeEach(function () {
@@ -104,12 +104,44 @@ describe('Blog app', function () {
 
       // logging in as second user
       cy.login(user)
-
     })
 
     it('non-creator of the blog cannot see the delete button', function () {
       cy.contains('view').click()
       cy.get('html').should('not.contain', 'delete')
     })
+  })
+
+  describe('testing that blogs are ordered by likes', function () {
+    beforeEach(
+      'creating several blogs with different number of likes',
+      function () {
+        cy.login(Cypress.env('user'))
+        const blog1 = {
+          title: 'most liked blog (10 likes)',
+          author: 'cypress',
+          url: 'some url',
+          likes: 10,
+        }
+
+        const blog2 = {
+          title: 'second most liked blog (9 likes)',
+          author: 'cypress',
+          url: 'some url',
+          likes: 9,
+        }
+
+        cy.createBlog(blog1)
+        cy.createBlog(blog2)
+
+        cy.visit('')
+      }
+    )
+
+    it('renders most liked post first when first visited', function () {
+      cy.get('.all-blogs').children().eq(0).should('contain', 'most liked blog (10 likes)')
+      cy.get('.all-blogs').children().eq(1).should('contain', 'second most liked blog (9 likes)')
+    })
+
   })
 })

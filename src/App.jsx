@@ -207,15 +207,17 @@ const App = () => {
           loginForm()
         )}
 
-        {blogs.map((blog) => (
-          <Blog
-            addLike={likeBlog}
-            deleteBlog={handleDeleteBlog}
-            key={blog.id}
-            blog={blog}
-            user={user}
-          />
-        ))}
+        <div className="all-blogs">
+          {blogs.map((blog) => (
+            <Blog
+              addLike={likeBlog}
+              deleteBlog={handleDeleteBlog}
+              key={blog.id}
+              blog={blog}
+              user={user}
+            />
+          ))}
+        </div>
 
         <div>
           <br />

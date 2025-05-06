@@ -39,7 +39,7 @@ const Blog = ({ blog, addLike, deleteBlog, user }) => {
     <div style={blogStyle}>
       <div>
         {blog.title} by {blog.author}
-        <button onClick={toggleView} data-testid="toggle-btn" >{visible ? 'hide' : 'view'}</button>
+        <button className='view-hide-btn' onClick={toggleView} data-testid="toggle-btn" >{visible ? 'hide' : 'view'}</button>
         {visible && additionalInfo()}
       </div>
     </div>
